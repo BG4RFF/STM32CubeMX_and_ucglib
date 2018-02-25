@@ -165,6 +165,7 @@ ucg_int_t ucg_dev_ili9341_18x240x320(ucg_t *ucg, ucg_int_t msg, void *data);
 ucg_int_t ucg_dev_hx8352c_18x240x400(ucg_t *ucg, ucg_int_t msg, void *data);
 ucg_int_t ucg_dev_ili9486_18x320x480(ucg_t *ucg, ucg_int_t msg, void *data);
 ucg_int_t ucg_dev_ili9163_18x128x128(ucg_t *ucg, ucg_int_t msg, void *data);
+ucg_int_t ucg_dev_st7735_18x128x160(ucg_t *ucg, ucg_int_t msg, void *data);
 ucg_int_t ucg_dev_st7735_18xwidthxheight(ucg_t *ucg, ucg_int_t msg, void *data);
 ucg_int_t ucg_dev_pcf8833_16x132x132(ucg_t *ucg, ucg_int_t msg, void *data);
 ucg_int_t ucg_dev_ld50t6160_18x160x128_samsung(ucg_t *ucg, ucg_int_t msg, void *data);

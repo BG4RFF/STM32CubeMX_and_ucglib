@@ -230,7 +230,7 @@ void ucg_string(ucg_t* ucg)
   ucg_SetColor(ucg, 0,0,0,255);
   ucg_DrawString(ucg,54,66,2, " 180");
   ucg_SetColor(ucg, 0,0,255,255);
-  ucg_DrawString(ucg,55,62,3, " 270");
+  ucg_DrawString(ucg,55,82,3, " 270");
 }
 
 void ucg_line(ucg_t* ucg)
