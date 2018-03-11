@@ -2,12 +2,16 @@
 
 I presume you have an IDE, in this example I use SW4STM32 (Eclipse), STM32CubeMX and prepared workspace, maybe with the name "ucg".
   
-Start STM32CubeMX, open a new Project, select your board/MCU, activate SPI1 and choose the pins like this. ![Pinout](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/Pinout.JPG)  
+Start STM32CubeMX, open a new Project, select your board/MCU, activate SPI1 and choose the pins like this.  
+
+![Pinout-spi](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/Pinout-spi.JPG)  
+
 The configuration for SPI is "Transmit Only Master" for Mode and "Disable" for Hardware NSS Signal.
 "NSS" means Slave Select (or Chip Select) is active low, we will control the signal by software. Configure the rest of the Project Settings as you see in the pictures,  
+
 ![SPI-Config](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/SPI-Config.JPG?raw=true)  
 
-![GPIO](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/GPIO.JPG?raw=true)  
+![GPIO-spi](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/GPIO-spi.JPG?raw=true)  
 
 ![Settings](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/Settings.JPG?raw=true)  
 
@@ -28,7 +32,21 @@ With the driver "ucg_dev_tft_widthxheight_st7735.c" you can choosen the count of
 Compile the project and program your controller.  
 
 The display should look like this.  
-![Nucleo-ST7735](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/Nucleo-ST7735.JPG?raw=true) 
+
+![Nucleo-ST7735](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/Nucleo-ST7735.JPG?raw=true)  
+
+With the Release 2.0 I made a upgrading with a driver for 8bit parallel interface.  
+You can see the in the picture the necessary arrangements in CubeMX.  
+
+![Pinout-8bit](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/Pinout-8bit.JPG)  
+
+![GPIO-8bit](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/GPIO-8bit.JPG?raw=true)  
+
+In the source code you will find all changes as comment, search for "8-bit".  
+
+Now the display should look like this.  
+
+![Nucleo-ILI9341](https://github.com/harebit/STM32CubeMX_and_ucglib/blob/master/Nucleo-ILI9341.JPG?raw=true)  
 
 
 harebit
