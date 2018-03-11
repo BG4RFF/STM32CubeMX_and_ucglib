@@ -103,7 +103,9 @@ int main(void)
   // see ucg.h for a list of ucg_dev and ucg_ext objects
   // more info at https://github.com/olikraus/ucglib/wiki/hal
   // ucg_Init(pointer to ucg, device-driver, extension of device-driver, communication-driver)
-  ucg_Init(&ucg, ucg_dev_st7735_18xwidthxheight, ucg_ext_st7735_18, ucg_com_stm32_hal);
+   ucg_Init(&ucg, ucg_dev_st7735_18xwidthxheight, ucg_ext_st7735_18, ucg_com_stm32_hal);
+  // another example
+  // ucg_Init(&ucg, ucg_dev_ili9341_18x240x320, ucg_ext_ili9341_18, ucg_com_stm32_hal);
 
   /* define preferred font rendering method (no text will be visible, if this is missing */
   ucg_SetFontMode(&ucg, UCG_FONT_MODE_TRANSPARENT);

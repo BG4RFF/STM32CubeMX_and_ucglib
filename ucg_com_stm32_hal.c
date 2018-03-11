@@ -16,11 +16,6 @@
 int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
 {
 
-	//  uint8_t *ptr;
-	//  static uint8_t buffer_count;
-	//  static uint8_t buffer[DATA_BUFFER_SIZE+1];
-
-
   switch(msg)
   {
     case UCG_COM_MSG_POWER_UP: //10
@@ -44,16 +39,29 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* By receiving this message, the following code should delay by */
       /* "arg" microseconds. One microsecond is 0.000001 second */
 
+      //HAL_Delay(arg);
+
       break;
     case UCG_COM_MSG_CHANGE_RESET_LINE: //13
       /* "data" is not used */
       /* "arg" = 1: set the reset output line to 1 */							// idle => high = 1
       /* "arg" = 0: set the reset output line to 0 */							// active => low = 0
+
+//--- spi ------------------------------------------------------------------
+
     	if(arg == 0)
     	    HAL_GPIO_WritePin(Reset_GPIO_Port, Reset_Pin, GPIO_PIN_RESET);
     	else
     	  	HAL_GPIO_WritePin(Reset_GPIO_Port, Reset_Pin, GPIO_PIN_SET);
 
+/*--- 8-bit ----------------------------------------------------------------
+ *
+ * 	 if(arg == 0)
+ * 	    HAL_GPIO_WritePin(LCD_RST_GPIO_Port, LCD_RST_Pin, GPIO_PIN_RESET);
+ * 	 else
+ * 	  	HAL_GPIO_WritePin(LCD_RST_GPIO_Port, LCD_RST_Pin, GPIO_PIN_SET);
+ *
+--------------------------------------------------------------------------*/
       break;
 
     case UCG_COM_MSG_CHANGE_CD_LINE:  //15
@@ -61,10 +69,22 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* "data" is not used */
       /* "arg" = 1: set the command/data (a0) output line to 1 */				//high = 1 => data or parameter
       /* "arg" = 0: set the command/data (a0) output line to 0 */				//low  = 0 => command
+
+// --- spi -----------------------------------------------------------------
+
     	if(arg == 0)
     		HAL_GPIO_WritePin(CD_GPIO_Port, CD_Pin, GPIO_PIN_RESET);
     	else
     		HAL_GPIO_WritePin(CD_GPIO_Port, CD_Pin, GPIO_PIN_SET);
+
+/* --- 8-bit --------------------------------------------------------------
+ *
+ *    	 if(arg == 0)
+ *  		HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_RESET);
+ *  	else
+ *  		HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_SET);
+ *
+-------------------------------------------------------------------------- */
 
       break;
 
@@ -74,10 +94,21 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* "arg" = 1: set the chipselect output line to 1 */
       /* "arg" = 0: set the chipselect output line to 0 */ 						//active => low = 0
 
+// --- spi -----------------------------------------------------------------
+
     	if(arg == 0)
     		HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_RESET);
     	else
     		HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_SET);
+
+/* --- 8-bit --------------------------------------------------------------
+ *
+ *  	if(arg == 0)
+ *  		HAL_GPIO_WritePin(LCD_CS_GPIO_Port, LCD_CS_Pin, GPIO_PIN_RESET);
+ *  	else
+ *  		HAL_GPIO_WritePin(LCD_CS_GPIO_Port, LCD_CS_Pin, GPIO_PIN_SET);
+ *
+ -------------------------------------------------------------------------*/
 
       break;
 
@@ -86,7 +117,16 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* "arg" contains one byte, which should be sent to the display */
       /* The current status of the CD line is available */
       /* in bit 0 of u8g->com_status */
+
+// --- spi ----------------------------------------------------------------
+
     	HAL_SPI_Transmit(&SPI_HANDLER, (uint8_t *)&arg, 1, SPI_TIMEOUT);
+
+/* --- 8-bit -------------------------------------------------------------
+ *
+ * 	   ucg_com_stm32_send_8bit(arg);
+ *
+--------------------------------------------------------------------------*/
 
       break;
 
@@ -96,7 +136,17 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* The current status of the CD line is available */
       /* in bit 0 of u8g->com_status */
     	while( arg > 0 ) {
+
+// --- spi ----------------------------------------------------------------
+
         	HAL_SPI_Transmit(&SPI_HANDLER, (uint8_t *)data, 1, SPI_TIMEOUT);
+
+/* --- 8-bit --------------------------------------------------------------
+ *
+ * 		ucg_com_stm32_send_8bit(data[0]);
+ *
+---------------------------------------------------------------------------*/
+
         arg--;
           }
       break;
@@ -108,7 +158,18 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* The current status of the CD line is available */
       /* in bit 0 of u8g->com_status */
     	while( arg > 0 ) {
+
+// --- spi -----------------------------------------------------------------
+
     		HAL_SPI_Transmit(&SPI_HANDLER, (uint8_t *)data, 2, SPI_TIMEOUT);
+
+/* --- 8-bit ---------------------------------------------------------------
+ *
+ *    		ucg_com_stm32_send_8bit(data[0]);
+ *  		ucg_com_stm32_send_8bit(data[1]);
+ *
+--------------------------------------------------------------------------- */
+
     	arg--;
          }
       break;
@@ -121,8 +182,20 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* The current status of the CD line is available */
       /* in bit 0 of u8g->com_status */
     	while( arg > 0 ) {
+
+// --- spi ------------------------------------------------------------------
+
     		HAL_SPI_Transmit(&SPI_HANDLER, (uint8_t *)data, 3, SPI_TIMEOUT);
-    	arg--;
+
+/* --- 8-bit ----------------------------------------------------------------
+ *
+ *     		ucg_com_stm32_send_8bit(data[0]);
+ *  		ucg_com_stm32_send_8bit(data[1]);
+ *  		ucg_com_stm32_send_8bit(data[2]);
+ *
+--------------------------------------------------------------------------- */
+
+   		arg--;
           }
        break;
 
@@ -130,7 +203,18 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
       /* "data" is an array with "arg" bytes */
       /* send "arg" bytes to the display */
 
+// --- spi -------------------------------------------------------------------
+
     		HAL_SPI_Transmit(&SPI_HANDLER, (uint8_t *)data, arg, SPI_TIMEOUT);
+
+/* --- 8-bit -----------------------------------------------------------------
+ *
+ *     	 while( arg > 0 ) {
+ *     	  ucg_com_stm32_send_8bit(*data++);
+ *  		arg--;
+ *  	      }
+ *
+--------------------------------------------------------------------------- */
 
       break;
 
@@ -146,17 +230,45 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
     		  	  if ( *data == 1 )
     		  	  {
     		  		  /* set CD (=D/C=A0) line to low */
-    		  		  HAL_GPIO_WritePin(CD_GPIO_Port, CD_Pin, GPIO_PIN_RESET);
+
+// --- spi -------------------------------------------------------------------
+
+    		  	 HAL_GPIO_WritePin(CD_GPIO_Port, CD_Pin, GPIO_PIN_RESET);
+
+/* --- 8-bit -----------------------------------------------------------------
+ *
+ *   		  	HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_SET);
+ *
+---------------------------------------------------------------------------- */
     		  	  }
     		  	  else
     		  	  {
     		  		  /* set CD (=D/C=A0) line to high */
-    		  		  HAL_GPIO_WritePin(CD_GPIO_Port, CD_Pin, GPIO_PIN_SET);
+
+// --- spi -------------------------------------------------------------------
+
+    		  		HAL_GPIO_WritePin(CD_GPIO_Port, CD_Pin, GPIO_PIN_SET);
+
+/* --- 8-bit -----------------------------------------------------------------
+ *
+ *   		    	HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_SET);
+ *
+----------------------------------------------------------------------------- */
     		  	  }
     	  	  }
     	  data++;
 			/* send *data to the display */
+
+// --- spi -------------------------------------------------------------------
+
 			HAL_SPI_Transmit(&SPI_HANDLER, (uint8_t *)data, 1, SPI_TIMEOUT);
+
+/* --- 8-bit -----------------------------------------------------------------
+ *
+ *    	  ucg_com_stm32_send_8bit(*data);
+ *
+----------------------------------------------------------------------------- */
+
 		  data++;
 		  arg--;
       }
@@ -164,3 +276,45 @@ int16_t ucg_com_stm32_hal(ucg_t *ucg, int16_t msg, uint16_t arg, uint8_t *data)
   }
   return 1;
 }
+// --- 8-bit ---------------------------------------------------------------------------------------
+
+//void ucg_com_stm32_send_8bit(uint8_t eightbit)
+
+//{
+// with HAL-GPIO --- fast ---------------------------------------------------------------------------
+/*
+HAL_GPIO_WritePin(LCD_D0_GPIO_Port, LCD_D0_Pin, (eightbit & 1) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_D1_GPIO_Port, LCD_D1_Pin, (eightbit & 2) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_D2_GPIO_Port, LCD_D2_Pin, (eightbit & 4) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_D3_GPIO_Port, LCD_D3_Pin, (eightbit & 8) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_D4_GPIO_Port, LCD_D4_Pin, (eightbit & 16) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_D5_GPIO_Port, LCD_D5_Pin, (eightbit & 32) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_D6_GPIO_Port, LCD_D6_Pin, (eightbit & 64) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_D7_GPIO_Port, LCD_D7_Pin, (eightbit & 128) == 0 ? GPIO_PIN_RESET : GPIO_PIN_SET);
+HAL_GPIO_WritePin(LCD_WR_GPIO_Port, LCD_WR_Pin, GPIO_PIN_RESET);
+HAL_GPIO_WritePin(LCD_WR_GPIO_Port, LCD_WR_Pin, GPIO_PIN_SET);
+*/
+// with GPIO --- faster ----------------------------------------------------------------------------
+/*
+(eightbit & 1) == 0 ? (GPIOA->BSRR = (uint32_t)LCD_D0_Pin << 16) : (GPIOA->BSRR = LCD_D0_Pin);
+(eightbit & 2) == 0 ? (GPIOC->BSRR = (uint32_t)LCD_D1_Pin << 16) : (GPIOC->BSRR = LCD_D1_Pin);
+(eightbit & 4) == 0 ? (GPIOA->BSRR = (uint32_t)LCD_D2_Pin << 16) : (GPIOA->BSRR = LCD_D2_Pin);
+(eightbit & 8) == 0 ? (GPIOB->BSRR = (uint32_t)LCD_D3_Pin << 16) : (GPIOB->BSRR = LCD_D3_Pin);
+(eightbit & 16) == 0 ? (GPIOB->BSRR = (uint32_t)LCD_D4_Pin << 16) : (GPIOB->BSRR = LCD_D4_Pin);
+(eightbit & 32) == 0 ? (GPIOB->BSRR = (uint32_t)LCD_D5_Pin << 16) : (GPIOB->BSRR = LCD_D5_Pin);
+(eightbit & 64) == 0 ? (GPIOB->BSRR = (uint32_t)LCD_D6_Pin << 16) : (GPIOB->BSRR = LCD_D6_Pin);
+(eightbit & 128) == 0 ? (GPIOA->BSRR = (uint32_t)LCD_D7_Pin << 16) : (GPIOA->BSRR = LCD_D7_Pin);
+GPIOA->BSRR = (uint32_t)LCD_WR_Pin << 16;
+GPIOA->BSRR = LCD_WR_Pin;
+*/
+// with Port B, Pin 0-7 --- fastest ----------------------------------------------------------------
+/*
+GPIOB->BSRR = 0xFFFF0000;
+GPIOB->BSRR = (uint32_t)eightbit;
+GPIOA->BSRR = 0x00020000;
+//GPIOA->BSRR = (uint32_t)LCD_WR_Pin << 16;
+GPIOA->BSRR = LCD_WR_Pin;
+*/
+
+
+//}
